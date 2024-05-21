@@ -73,7 +73,7 @@ class Server:
 
         return {
             "index": index,
-            "n_index": n_index + 1,
+            "next_index": n_index + 1,
             "page_size": page_size,
             "data": data,
         }
