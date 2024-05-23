@@ -1,21 +1,22 @@
 #!/usr/bin/python3
 """
-define a LIFOCache class which inherits from BaseCaching.
+define a MRUCache class which inherits from BaseCaching.
 """
 BaseCaching = __import__("base_caching").BaseCaching
 
 
-class LIFOCache(BaseCaching):
+class MRUCache(BaseCaching):
     """
-    LIFOCache is a caching system that inherits from BaseCaching.
+    MRUCache is a caching system that inherits from BaseCaching.
     """
 
     def __init__(self):
         """
-        initialize the LIFOCache instance by calling
+        initialize the MRUCache instance by calling
         the parent class initializer.
         """
         super().__init__()
+        self.order = []
 
     def put(self, key, item):
         """
@@ -26,10 +27,11 @@ class LIFOCache(BaseCaching):
         """
         if key and item:
             if len(self.cache_data) >= BaseCaching.MAX_ITEMS:
-                removed = list(self.cache_data.keys())[-1]
+                removed = self.order.pop()
                 self.cache_data.pop(removed)
                 print("DISCARD: {}".format(removed))
             self.cache_data[key] = item
+            self.order.append(key)
 
     def get(self, key):
         """
@@ -40,4 +42,7 @@ class LIFOCache(BaseCaching):
             The item stored in the cache with the specified key,
             or None if the key is not found.
         """
-        return self.cache_data.get(key)
+        if key in self.cache_data:
+            self.order.remove(key)
+            self.order.append(key)
+            return self.cache_data.get(key)
